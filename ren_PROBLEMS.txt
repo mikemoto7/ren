@@ -1,0 +1,66 @@
+--------------------------------------------
+Problem:
+
+How to prevent renaming a file to an existing file's name?
+
+Example: Want to switch file names:
+touch temp1
+touch temp2
+
+ren3 temp*
+
+In ren3 editor:
+temp1
+temp2
+
+After edit:
+temp2
+temp1
+
+ren3 shows to user:
+mv "temp1" "temp2"
+mv "temp2" "temp1"
+
+ren3 needs to prevent overwriting temp2 with temp1.
+
+ren3 nees to detect this situation and use a temp filename:
+mv "temp1" "temp2.tmp"
+mv "temp2" "temp1"
+mv "temp2.tmp" "temp2"
+
+--------------------------------------------
+Problem:
+
+Example: Want to switch dir names:
+
+mkdir tempdir1
+mkdir tempdir2
+
+ren3 tempdir*
+
+In ren3 editor:
+tempdir1
+tempdir2
+
+After edit:
+tempdir2
+tempdir1
+
+ren3 shows to user:
+mv "tempdir1" "tempdir2"
+mv "tempdir2" "tempdir1"
+
+This will cause moving, not renaming:
+
+After first command:
+tempdir2/tempdir1
+
+After second command:
+tempdir1/tempdir1
+
+
+
+
+
+
+
