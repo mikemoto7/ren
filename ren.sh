@@ -151,9 +151,28 @@ if [ \( ! -f ${orig_filenames[$index]} -a -f "$newFileName" \) -o \( ! -d ${orig
    echo "# ${orig_filenames[$index]} has already been renamed to $newFileName."
 
 elif [ \( -f ${orig_filenames[$index]} -a -f "$newFileName" \) -o \( -d ${orig_filenames[$index]} -a -d "$newFileName" \) ]; then
-   echo "# Cannot rename ${orig_filenames[$index]}.  $newFileName already exists.  Cannot overwrite existing files/dirs."
-   return_rc=1
-
+   var1=`echo ${orig_filenames[$index]} | tr '[A-Z]' '[a-z]'`
+   var2=`echo $newFileName | tr '[A-Z]' '[a-z]'`
+   if [ "$var1" != "$var2" ] ; then
+      echo "# Cannot rename ${orig_filenames[$index]}.  $newFileName already exists.  Cannot overwrite existing files/dirs."
+      return_rc=1
+   else
+      # case-insensitive file system like Cygwin
+      echo "Renaming ${orig_filenames[$index]} to ${newFileName}.tmp"
+      mv ${orig_filenames[$index]} ${newFileName}.tmp
+      rc=\$?
+      if [ \$rc -ne 0 ]; then
+         return_rc=\$rc
+      fi
+      echo "Renaming ${newFileName}.tmp to $newFileName"
+      mv ${newFileName}.tmp $newFileName
+      rc=\$?
+      if [ \$rc -ne 0 ]; then
+         return_rc=\$rc
+      else
+         return_rc=0
+      fi
+   fi
 elif [ \( ! -f ${orig_filenames[$index]} -a ! -f "$newFileName" \) -a \( ! -d ${orig_filenames[$index]} -a ! -d "$newFileName" \) ]; then
    echo "# File with old filename ${orig_filenames[$index]} does not exist."
    return_rc=1
